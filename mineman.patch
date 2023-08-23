@@ -1,0 +1,1517 @@
+diff --git a/.gitignore b/.gitignore
+index 63763c6cd..8b422c405 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -66,6 +66,7 @@ modules.order
+ /modules.builtin
+ /modules.builtin.modinfo
+ /modules.nsdeps
++out
+ 
+ #
+ # RPM spec file (make rpm-pkg)
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 7a72fc636..5df858b2d 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1311,7 +1311,8 @@ dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += \
+ dtb-$(CONFIG_ARCH_TEGRA_114_SOC) += \
+ 	tegra114-dalmore.dtb \
+ 	tegra114-roth.dtb \
+-	tegra114-tn7.dtb
++	tegra114-tn7.dtb \
++	tegra114-microsoft-surface-2-efi.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_124_SOC) += \
+ 	tegra124-apalis-eval.dtb \
+ 	tegra124-apalis-v1.2-eval.dtb \
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index fb99b3e97..51a9b963e 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -93,7 +93,7 @@ rgb {
+ 			};
+ 		};
+ 
+-		hdmi@54280000 {
++		hdmi: hdmi@54280000 {
+ 			compatible = "nvidia,tegra114-hdmi";
+ 			reg = <0x54280000 0x00040000>;
+ 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+@@ -335,7 +335,7 @@ pwm: pwm@7000a000 {
+ 		status = "disabled";
+ 	};
+ 
+-	i2c@7000c000 {
++	i2c1: i2c@7000c000 {
+ 		compatible = "nvidia,tegra114-i2c";
+ 		reg = <0x7000c000 0x100>;
+ 		interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+@@ -350,7 +350,7 @@ i2c@7000c000 {
+ 		status = "disabled";
+ 	};
+ 
+-	i2c@7000c400 {
++	i2c2: i2c@7000c400 {
+ 		compatible = "nvidia,tegra114-i2c";
+ 		reg = <0x7000c400 0x100>;
+ 		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+@@ -365,7 +365,7 @@ i2c@7000c400 {
+ 		status = "disabled";
+ 	};
+ 
+-	i2c@7000c500 {
++	i2c3: i2c@7000c500 {
+ 		compatible = "nvidia,tegra114-i2c";
+ 		reg = <0x7000c500 0x100>;
+ 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
+@@ -380,7 +380,7 @@ i2c@7000c500 {
+ 		status = "disabled";
+ 	};
+ 
+-	i2c@7000c700 {
++	i2c4: i2c@7000c700 {
+ 		compatible = "nvidia,tegra114-i2c";
+ 		reg = <0x7000c700 0x100>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+@@ -395,7 +395,7 @@ i2c@7000c700 {
+ 		status = "disabled";
+ 	};
+ 
+-	i2c@7000d000 {
++	i2c5: i2c@7000d000 {
+ 		compatible = "nvidia,tegra114-i2c";
+ 		reg = <0x7000d000 0x100>;
+ 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
+@@ -410,7 +410,7 @@ i2c@7000d000 {
+ 		status = "disabled";
+ 	};
+ 
+-	spi@7000d400 {
++	spi1: spi@7000d400 {
+ 		compatible = "nvidia,tegra114-spi";
+ 		reg = <0x7000d400 0x200>;
+ 		interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+@@ -425,7 +425,7 @@ spi@7000d400 {
+ 		status = "disabled";
+ 	};
+ 
+-	spi@7000d600 {
++	spi2: spi@7000d600 {
+ 		compatible = "nvidia,tegra114-spi";
+ 		reg = <0x7000d600 0x200>;
+ 		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+@@ -440,7 +440,7 @@ spi@7000d600 {
+ 		status = "disabled";
+ 	};
+ 
+-	spi@7000d800 {
++	spi3: spi@7000d800 {
+ 		compatible = "nvidia,tegra114-spi";
+ 		reg = <0x7000d800 0x200>;
+ 		interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+@@ -455,7 +455,7 @@ spi@7000d800 {
+ 		status = "disabled";
+ 	};
+ 
+-	spi@7000da00 {
++	spi4: spi@7000da00 {
+ 		compatible = "nvidia,tegra114-spi";
+ 		reg = <0x7000da00 0x200>;
+ 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
+@@ -470,7 +470,7 @@ spi@7000da00 {
+ 		status = "disabled";
+ 	};
+ 
+-	spi@7000dc00 {
++	spi5: spi@7000dc00 {
+ 		compatible = "nvidia,tegra114-spi";
+ 		reg = <0x7000dc00 0x200>;
+ 		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+@@ -485,7 +485,7 @@ spi@7000dc00 {
+ 		status = "disabled";
+ 	};
+ 
+-	spi@7000de00 {
++	spi6: spi@7000de00 {
+ 		compatible = "nvidia,tegra114-spi";
+ 		reg = <0x7000de00 0x200>;
+ 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+@@ -500,14 +500,14 @@ spi@7000de00 {
+ 		status = "disabled";
+ 	};
+ 
+-	rtc@7000e000 {
++	tegra_rtc: rtc@7000e000 {
+ 		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
+ 		reg = <0x7000e000 0x100>;
+ 		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA114_CLK_RTC>;
+ 	};
+ 
+-	kbc@7000e200 {
++	tegra_kbc: kbc@7000e200 {
+ 		compatible = "nvidia,tegra114-kbc";
+ 		reg = <0x7000e200 0x100>;
+ 		interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+@@ -646,7 +646,7 @@ mipi: mipi@700e3000 {
+ 		#nvidia,mipi-calibrate-cells = <1>;
+ 	};
+ 
+-	mmc@78000000 {
++	sdmmc1: mmc@78000000 {
+ 		compatible = "nvidia,tegra114-sdhci";
+ 		reg = <0x78000000 0x200>;
+ 		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+@@ -657,7 +657,7 @@ mmc@78000000 {
+ 		status = "disabled";
+ 	};
+ 
+-	mmc@78000200 {
++	sdmmc2: mmc@78000200 {
+ 		compatible = "nvidia,tegra114-sdhci";
+ 		reg = <0x78000200 0x200>;
+ 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+@@ -668,7 +668,7 @@ mmc@78000200 {
+ 		status = "disabled";
+ 	};
+ 
+-	mmc@78000400 {
++	sdmmc3: mmc@78000400 {
+ 		compatible = "nvidia,tegra114-sdhci";
+ 		reg = <0x78000400 0x200>;
+ 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+@@ -679,7 +679,7 @@ mmc@78000400 {
+ 		status = "disabled";
+ 	};
+ 
+-	mmc@78000600 {
++	sdmmc4: mmc@78000600 {
+ 		compatible = "nvidia,tegra114-sdhci";
+ 		reg = <0x78000600 0x200>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+@@ -698,11 +698,11 @@ usb@7d000000 {
+ 		clocks = <&tegra_car TEGRA114_CLK_USBD>;
+ 		resets = <&tegra_car 22>;
+ 		reset-names = "usb";
+-		nvidia,phy = <&phy1>;
++		nvidia,phy = <&usb1_phy>;
+ 		status = "disabled";
+ 	};
+ 
+-	phy1: usb-phy@7d000000 {
++	usb1_phy: usb-phy@7d000000 {
+ 		compatible = "nvidia,tegra114-usb-phy", "nvidia,tegra30-usb-phy";
+ 		reg = <0x7d000000 0x4000>,
+ 		      <0x7d000000 0x4000>;
+@@ -736,11 +736,11 @@ usb@7d008000 {
+ 		clocks = <&tegra_car TEGRA114_CLK_USB3>;
+ 		resets = <&tegra_car 59>;
+ 		reset-names = "usb";
+-		nvidia,phy = <&phy3>;
++		nvidia,phy = <&usb3_phy>;
+ 		status = "disabled";
+ 	};
+ 
+-	phy3: usb-phy@7d008000 {
++	usb3_phy: usb-phy@7d008000 {
+ 		compatible = "nvidia,tegra114-usb-phy", "nvidia,tegra30-usb-phy";
+ 		reg = <0x7d008000 0x4000>,
+ 		      <0x7d000000 0x4000>;
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index eaa079c17..1251c1192 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -564,6 +564,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	switch (parent_rate) {
+ 	case 12000000:
+ 	case 26000000:
++	case 48000000:
+ 		cfreq = (rate <= 1000000 * 1000) ? 1000000 : 2000000;
+ 		break;
+ 	case 13000000:
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 4e2b26e3e..703a66f3d 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -362,6 +362,9 @@ static struct tegra_clk_pll_freq_table pll_a_freq_table[] = {
+ 	{ 28800000, 282240000, 245, 25, 1, 8 },
+ 	{ 28800000, 368640000, 320, 25, 1, 8 },
+ 	{ 28800000, 240000000, 200, 24, 1, 8 },
++	{ 48000000, 282240000, 147, 25, 1, 8 },
++	{ 48000000, 368640000, 192, 25, 1, 8 },
++	{ 48000000, 564480000, 294, 25, 1, 8 },
+ 	{        0,         0,   0,  0, 0, 0 },
+ };
+ 
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index 2c3dac5ec..9b8c81464 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -243,6 +243,73 @@ config EFI_DISABLE_PCI_DMA
+ 	  options "efi=disable_early_pci_dma" or "efi=no_disable_early_pci_dma"
+ 	  may be used to override this option.
+ 
++	menu "Windows RT devices"
++	config WINDOWS_RT
++		depends on EFI
++		bool "Windows RT support"
++		help
++		  Various options useful for Windows RT devices.
++
++	config WINDOWS_RT_SECUREBOOT_SKIP
++		bool "Skip secureboot check"
++		depends on WINDOWS_RT
++		help
++		  Skip secureboot check in EFI stub.
++
++		  This is needed for devices like:
++		  - Asus Vivo Tab RT (tf600t)
++		  - Lenovo Ideapad Yoga 11
++
++		  This isn't needed for devices with yahallo:
++		  - Microsoft Surface RT/2
++
++	config CMDLINE_FROM_FILE
++		bool "Read cmdline from file"
++		depends on WINDOWS_RT
++		help
++		  Reads EFI Stub cmdline from file (cmdline.txt).
++		  This is helpful when you want to boot without EFI bootloader
++		  or need to boot from goldenkey where no cmdline can be passed
++		  right now.
++
++		  Don't forget to include the dtb= param.
++
++	config UEFI_TEGRA_UART
++		bool "Tegra UART"
++		depends on ARCH_TEGRA
++		depends on WINDOWS_RT
++		help
++		  UEFI Stub sets up UART for kernel early_print debugging.
++		  Currently support:
++		  - tegra114: microSD port
++
++		choice
++			prompt "Select your SoC & UART port"
++			depends on UEFI_TEGRA_UART
++
++			config UEFI_TEGRA114_UARTA
++				bool "Tegra114 UART-A (micro SD port)"
++				depends on UEFI_TEGRA_UART
++				help
++				  UART-A output can be accessed on the micro SD
++				  port.
++
++			config UEFI_TEGRA30_UARTA
++				bool "tegra30 UART-A"
++				depends on UEFI_TEGRA_UART
++				help
++				  UART-A output can be accessed on the J14 OEM
++				  debug header.
++		endchoice
++
++	config UEFI_TEGRA_UART_MIRROR
++		bool "Mirror EFI stub output"
++		depends on UEFI_TEGRA_UART
++		help
++		  Mirrors all EFI Stub output to UART.
++
++	endmenu
++
+ endmenu
+ 
+ config EFI_EMBEDDED_FIRMWARE
+@@ -283,4 +350,4 @@ config EFI_CUSTOM_SSDT_OVERLAYS
+ 	  by a kernel command line option.
+ 
+ 	  See Documentation/admin-guide/acpi/ssdt-overlays.rst for more
+-	  information.
++	  information.
+\ No newline at end of file
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index 2c67f71f2..ed002f84d 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -37,13 +37,6 @@ KBUILD_CFLAGS			:= $(cflags-y) -Os -DDISABLE_BRANCH_PROFILING \
+ 				   $(call cc-option,-fno-addrsig) \
+ 				   -D__DISABLE_EXPORTS
+ 
+-#
+-# struct randomization only makes sense for Linux internal types, which the EFI
+-# stub code never touches, so let's turn off struct randomization for the stub
+-# altogether
+-#
+-KBUILD_CFLAGS := $(filter-out $(RANDSTRUCT_CFLAGS), $(KBUILD_CFLAGS))
+-
+ # remove SCS flags from all objects in this directory
+ KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_SCS), $(KBUILD_CFLAGS))
+ # disable LTO
+@@ -74,6 +67,8 @@ lib-$(CONFIG_EFI_GENERIC_STUB)	+= efi-stub.o fdt.o string.o \
+ 				   $(patsubst %.c,lib-%.o,$(efi-deps-y))
+ 
+ lib-$(CONFIG_ARM)		+= arm32-stub.o
++lib-y		+= tegra_uart.o
++lib-y		+= windows_rt.o
+ lib-$(CONFIG_ARM64)		+= arm64-stub.o
+ lib-$(CONFIG_X86)		+= x86-stub.o
+ lib-$(CONFIG_RISCV)		+= riscv-stub.o
+diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
+index 2a00eb627..fc11c6fe0 100644
+--- a/drivers/firmware/efi/libstub/efi-stub-helper.c
++++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
+@@ -20,10 +20,10 @@
+ 
+ bool efi_nochunk;
+ bool efi_nokaslr = !IS_ENABLED(CONFIG_RANDOMIZE_BASE);
+-bool efi_noinitrd;
+ int efi_loglevel = CONSOLE_LOGLEVEL_DEFAULT;
+ bool efi_novamap;
+ 
++static bool efi_noinitrd;
+ static bool efi_nosoftreserve;
+ static bool efi_disable_pci_dma = IS_ENABLED(CONFIG_EFI_DISABLE_PCI_DMA);
+ 
+@@ -164,6 +164,10 @@ int efi_printk(const char *fmt, ...)
+ 	va_end(args);
+ 
+ 	efi_puts(printf_buf);
++
++	if (IS_ENABLED(CONFIG_UEFI_TEGRA_UART_MIRROR))
++		tegra_uart_print(printf_buf);
++
+ 	if (printed >= sizeof(printf_buf)) {
+ 		efi_puts("[Message truncated]\n");
+ 		return -1;
+@@ -439,10 +443,8 @@ efi_status_t efi_exit_boot_services(void *handle,
+ {
+ 	efi_status_t status;
+ 
+-	if (efi_disable_pci_dma)
+-		efi_pci_disable_bridge_busmaster();
+-
+ 	status = efi_get_memory_map(map);
++
+ 	if (status != EFI_SUCCESS)
+ 		goto fail;
+ 
+@@ -450,6 +452,9 @@ efi_status_t efi_exit_boot_services(void *handle,
+ 	if (status != EFI_SUCCESS)
+ 		goto free_map;
+ 
++	if (efi_disable_pci_dma)
++		efi_pci_disable_bridge_busmaster();
++
+ 	status = efi_bs_call(exit_boot_services, handle, *map->key_ptr);
+ 
+ 	if (status == EFI_INVALID_PARAMETER) {
+@@ -624,6 +629,47 @@ efi_status_t efi_load_initrd_cmdline(efi_loaded_image_t *image,
+ 				    load_addr, load_size);
+ }
+ 
++static const struct {
++	efi_tcg2_event_t	event_data;
++	efi_tcg2_tagged_event_t tagged_event;
++	u8			tagged_event_data[];
++} initrd_tcg2_event = {
++	{
++		sizeof(initrd_tcg2_event) + sizeof("Linux initrd"),
++		{
++			sizeof(initrd_tcg2_event.event_data.event_header),
++			EFI_TCG2_EVENT_HEADER_VERSION,
++			9,
++			EV_EVENT_TAG,
++		},
++	},
++	{
++		INITRD_EVENT_TAG_ID,
++		sizeof("Linux initrd"),
++	},
++	{ "Linux initrd" },
++};
++
++static void efi_measure_initrd(unsigned long load_addr, unsigned long load_size)
++{
++	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
++	efi_tcg2_protocol_t *tcg2 = NULL;
++	efi_status_t status;
++
++	efi_bs_call(locate_protocol, &tcg2_guid, NULL, (void **)&tcg2);
++	if (tcg2) {
++		status = efi_call_proto(tcg2, hash_log_extend_event,
++					0, load_addr, load_size,
++					&initrd_tcg2_event.event_data);
++		if (status != EFI_SUCCESS)
++			efi_warn("Failed to measure initrd data: 0x%lx\n",
++				 status);
++		else
++			efi_info("Measured initrd data into PCR %d\n",
++				 initrd_tcg2_event.event_data.event_header.pcr_index);
++	}
++}
++
+ /**
+  * efi_load_initrd() - Load initial RAM disk
+  * @image:	EFI loaded image protocol
+@@ -642,17 +688,25 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
+ {
+ 	efi_status_t status;
+ 
+-	if (!load_addr || !load_size)
+-		return EFI_INVALID_PARAMETER;
+-
+-	status = efi_load_initrd_dev_path(load_addr, load_size, hard_limit);
+-	if (status == EFI_SUCCESS) {
+-		efi_info("Loaded initrd from LINUX_EFI_INITRD_MEDIA_GUID device path\n");
+-	} else if (status == EFI_NOT_FOUND) {
+-		status = efi_load_initrd_cmdline(image, load_addr, load_size,
+-						 soft_limit, hard_limit);
+-		if (status == EFI_SUCCESS && *load_size > 0)
+-			efi_info("Loaded initrd from command line option\n");
++	if (efi_noinitrd) {
++		*load_addr = *load_size = 0;
++		status = EFI_SUCCESS;
++	} else {
++		status = efi_load_initrd_dev_path(load_addr, load_size, hard_limit);
++		if (status == EFI_SUCCESS) {
++			efi_info("Loaded initrd from LINUX_EFI_INITRD_MEDIA_GUID device path\n");
++			if (*load_size > 0)
++				efi_measure_initrd(*load_addr, *load_size);
++		} else if (status == EFI_NOT_FOUND) {
++			status = efi_load_initrd_cmdline(image, load_addr, load_size,
++							 soft_limit, hard_limit);
++			if (status == EFI_SUCCESS && *load_size > 0)
++				efi_info("Loaded initrd from command line option\n");
++		}
++		if (status != EFI_SUCCESS) {
++			efi_err("Failed to load initrd: 0x%lx\n", status);
++			*load_addr = *load_size = 0;
++		}
+ 	}
+ 
+ 	return status;
+diff --git a/drivers/firmware/efi/libstub/efi-stub.c b/drivers/firmware/efi/libstub/efi-stub.c
+index 26e69788f..0abf5a846 100644
+--- a/drivers/firmware/efi/libstub/efi-stub.c
++++ b/drivers/firmware/efi/libstub/efi-stub.c
+@@ -40,6 +40,8 @@
+ 
+ #ifdef CONFIG_ARM64
+ # define EFI_RT_VIRTUAL_LIMIT	DEFAULT_MAP_WINDOW_64
++#elif defined(CONFIG_RISCV)
++# define EFI_RT_VIRTUAL_LIMIT	TASK_SIZE_MIN
+ #else
+ # define EFI_RT_VIRTUAL_LIMIT	TASK_SIZE
+ #endif
+@@ -135,6 +137,14 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+ 	struct screen_info *si;
+ 	efi_properties_table_t *prop_tbl;
+ 	unsigned long max_addr;
++	enum winrt_device_names winrt_device = unknown_device;
++	int i;
++
++	u8 buf_recv[4];
++	u8 buf_send = 0;
++	u32 size = 1;
++	u8 address = 0x48;
++	u8 tmp;
+ 
+ 	efi_system_table = sys_table_arg;
+ 
+@@ -148,6 +158,54 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+ 	if (status != EFI_SUCCESS)
+ 		goto fail;
+ 
++/*
++	for (i = 0; i < 256; i++) {
++		if (i % 16 == 0) {
++			efi_printk("\n");
++			efi_printk("%02x: ", i);
++		}
++
++		i2c_recv_buf_small(buf_recv, size, 0, address, i);
++		efi_printk("%02x ", buf_recv[0]);
++	}
++
++	while(true) {
++		i2c_recv_buf_small(buf_recv, size, 0, address, buf_send);
++		if (tmp != buf_recv[0]) {
++			tmp = buf_recv[0];
++			efi_info("first byte: %04x\n", tmp);
++		}
++	}
++*/
++	uint8_t *base = (uint8_t*) 0x6000d000;
++
++	/*
++	 * Figure out on which Windows RT device is booted.
++	 */
++	winrt_device = winrt_setup();
++
++	/*
++	 * Only set UART up if we know which device was booted.
++	 */
++	tegra_uart_init();
++
++/*
++	u8 *iram = 0x40000000;
++	u32 iram_size = 0x40000;
++	char tmp[3];
++
++	for (i = 0; i < iram_size; i++) {
++		if (i % 16 == 0) {
++			tegra_uart_print("\n");
++		} else if (i % 8 == 0) {
++			tegra_uart_print(" ");
++		}
++		tmp[0] = "0123456789ABCDEF"[*(iram+i) & 0x0f];
++		tmp[1] = "0123456789ABCDEF"[(*(iram+i) >> 4) & 0x0f];
++		tmp[2] = '\0';
++		tegra_uart_print(tmp);
++	}
++*/
+ 	/*
+ 	 * Get a handle to the loaded image protocol.  This is used to get
+ 	 * information about the running image, such as size and the command
+@@ -160,6 +218,17 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+ 		goto fail;
+ 	}
+ 
++	/*
++	 * Load cmdline parameters like dtb=, initrd=, root= from file.
++	 * The file is called "cmdline.txt" and should be located next to the kernel.
++	 * This will override the cmdline passed by bootloader.
++	 */
++	status = efi_read_cmdline_from_file(image);
++	if (status != EFI_SUCCESS) {
++		efi_err("Unable to read cmdline parameters from file\n");
++		goto fail;
++	}
++
+ 	/*
+ 	 * Get the command line from EFI, using the LOADED_IMAGE
+ 	 * protocol. We are going to copy the command line into the
+@@ -214,9 +283,13 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+ 	 * Unauthenticated device tree data is a security hazard, so ignore
+ 	 * 'dtb=' unless UEFI Secure Boot is disabled.  We assume that secure
+ 	 * boot is enabled if we can't determine its state.
++	 *
++	 * Most Windows RT devices can't disable secureboot so they need to skip
++	 * this check.
+ 	 */
+ 	if (!IS_ENABLED(CONFIG_EFI_ARMSTUB_DTB_LOADER) ||
+-	     secure_boot != efi_secureboot_mode_disabled) {
++	    (secure_boot != efi_secureboot_mode_disabled &&
++	    !IS_ENABLED(CONFIG_WINDOWS_RT_SECUREBOOT_SKIP))) {
+ 		if (strstr(cmdline_ptr, "dtb="))
+ 			efi_err("Ignoring DTB from command line.\n");
+ 	} else {
+@@ -240,15 +313,8 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+ 	if (!fdt_addr)
+ 		efi_info("Generating empty DTB\n");
+ 
+-	if (!efi_noinitrd) {
+-		max_addr = efi_get_max_initrd_addr(image_addr);
+-		status = efi_load_initrd(image, &initrd_addr, &initrd_size,
+-					 ULONG_MAX, max_addr);
+-		if (status != EFI_SUCCESS)
+-			efi_err("Failed to load initrd!\n");
+-	}
+-
+-	efi_random_get_seed();
++	efi_load_initrd(image, &initrd_addr, &initrd_size, ULONG_MAX,
++			efi_get_max_initrd_addr(image_addr));
+ 
+ 	/*
+ 	 * If the NX PE data feature is enabled in the properties table, we
+@@ -287,10 +353,39 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+ 	}
+ 
+ 	install_memreserve_table();
++/*
++	for (i = 0; i < 0x1000; i++) {
++		if (i % 16 == 0) {
++			tegra_uart_print("\n");
++			tegra_uart_print("%02x: ", i);
++		}
+ 
++		tegra_uart_print("%02x ", *(base+i));
++	}
++*/
++/**
++ * @brief lock Vbus GPIO
++ * locks the VBus GPIO so ExitBootService call can't turn it off.
++ */
++/*
++	uint16_t *gpio = (uint16_t*) 0x6000d208;
++	uint16_t cur_val = *gpio;
++	cur_val = cur_val | 0x200;
++	*gpio = cur_val;
++*/
+ 	status = allocate_new_fdt_and_exit_boot(handle, &fdt_addr,
+ 						initrd_addr, initrd_size,
+ 						cmdline_ptr, fdt_addr, fdt_size);
++/*
++	for (i = 0; i < 0x1000; i++) {
++		if (i % 16 == 0) {
++			tegra_uart_print("\n");
++			tegra_uart_print("%02x: ", i);
++		}
++
++		tegra_uart_print("%02x ", *(base+i));
++	}
++*/
+ 	if (status != EFI_SUCCESS)
+ 		goto fail_free_initrd;
+ 
+@@ -377,3 +472,86 @@ void efi_get_virtmap(efi_memory_desc_t *memory_map, unsigned long map_size,
+ 		++*count;
+ 	}
+ }
++
++////////////////////////////////////////////////////////////////////////////////
++/////////////////////////////////////  I2C  ////////////////////////////////////
++////////////////////////////////////////////////////////////////////////////////
++
++#define vu32 volatile u32
++
++static void _i2c_wait(vu32 *base)
++{
++	u32 i;
++	base[0x23] = 0x25;
++	for (i = 0; i < 20; i++)
++	{
++		if (!(base[0x23] & 1))
++			break;
++	}
++}
++
++/**
++ * @brief i2c send package
++ * Sends a package to the I2C Bus
++ * @param idx i2c controller
++ * @param x slave address
++ * @param buf data to be transmitted
++ * @param size data size
++ * @return int error code
++ */
++static int _i2c_send_pkt(u32 idx, u32 x, u8 *buf, u32 size)
++{
++	vu32 *base = (vu32 *) 0x7000d000; //i2c_addrs[idx];
++	u32 tmp = 0;
++	if (size > 4)
++		return 0;
++
++	memcpy(&tmp, buf, size);
++
++	base[1] = x << 1; //Set x (send mode). x = address + 0=write
++	base[3] = tmp; //Set value. data register
++	base[0] = (2 * size - 2) | 0x2800; //Set size and send mode.
++	_i2c_wait(base); //Kick transaction.
++
++	base[0] = (base[0] & 0xFFFFFDFF) | 0x200;
++	while (base[7] & 0x100)
++		;
++
++	if (base[7] << 28)
++		return 0;
++
++	return 1;
++}
++
++static int _i2c_recv_pkt(u32 idx, u8 *buf, u32 size, u32 x)
++{
++	vu32 *base = (vu32 *) 0x7000d000; //i2c_addrs[idx];
++	u32 tmp;
++
++	if (size > 4)
++		return 0;
++
++	base[1] = (x << 1) | 1; //Set x (recv mode).
++	base[0] = (2 * size - 2) | 0x2840; //Set size and recv mode.
++	_i2c_wait(base); //Kick transaction.
++
++	base[0] = (base[0] & 0xFFFFFDFF) | 0x200;
++	while (base[7] & 0x100)
++		;
++
++	if (base[7] << 28)
++		return 0;
++
++	tmp = base[3]; //Get value.
++	memcpy(buf, &tmp, size);
++
++	return 1;
++}
++
++int i2c_recv_buf_small(u8 *buf, u32 size, u32 idx, u32 x, u32 y)
++{
++	int res = _i2c_send_pkt(idx, x, (u8 *)&y, 1);
++	if (res)
++		res = _i2c_recv_pkt(idx, buf, size, x);
++	return res;
++}
+\ No newline at end of file
+diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
+index fbffdd729..49057d406 100644
+--- a/drivers/firmware/efi/libstub/efistub.h
++++ b/drivers/firmware/efi/libstub/efistub.h
+@@ -31,7 +31,6 @@
+ 
+ extern bool efi_nochunk;
+ extern bool efi_nokaslr;
+-extern bool efi_noinitrd;
+ extern int efi_loglevel;
+ extern bool efi_novamap;
+ 
+@@ -667,6 +666,29 @@ union apple_properties_protocol {
+ 
+ typedef u32 efi_tcg2_event_log_format;
+ 
++#define INITRD_EVENT_TAG_ID 0x8F3B22ECU
++#define EV_EVENT_TAG 0x00000006U
++#define EFI_TCG2_EVENT_HEADER_VERSION	0x1
++
++struct efi_tcg2_event {
++	u32		event_size;
++	struct {
++		u32	header_size;
++		u16	header_version;
++		u32	pcr_index;
++		u32	event_type;
++	} __packed event_header;
++	/* u8[] event follows here */
++} __packed;
++
++struct efi_tcg2_tagged_event {
++	u32 tagged_event_id;
++	u32 tagged_event_data_size;
++	/* u8  tagged event data follows here */
++} __packed;
++
++typedef struct efi_tcg2_event efi_tcg2_event_t;
++typedef struct efi_tcg2_tagged_event efi_tcg2_tagged_event_t;
+ typedef union efi_tcg2_protocol efi_tcg2_protocol_t;
+ 
+ union efi_tcg2_protocol {
+@@ -677,7 +699,11 @@ union efi_tcg2_protocol {
+ 						       efi_physical_addr_t *,
+ 						       efi_physical_addr_t *,
+ 						       efi_bool_t *);
+-		void *hash_log_extend_event;
++		efi_status_t (__efiapi *hash_log_extend_event)(efi_tcg2_protocol_t *,
++							       u64,
++							       efi_physical_addr_t,
++							       u64,
++							       const efi_tcg2_event_t *);
+ 		void *submit_command;
+ 		void *get_active_pcr_banks;
+ 		void *set_active_pcr_banks;
+@@ -766,8 +792,6 @@ efi_status_t efi_get_random_bytes(unsigned long size, u8 *out);
+ efi_status_t efi_random_alloc(unsigned long size, unsigned long align,
+ 			      unsigned long *addr, unsigned long random_seed);
+ 
+-efi_status_t efi_random_get_seed(void);
+-
+ efi_status_t check_platform_features(void);
+ 
+ void *get_efi_config_table(efi_guid_t guid);
+@@ -817,6 +841,11 @@ efi_status_t handle_cmdline_files(efi_loaded_image_t *image,
+ 				  unsigned long *load_addr,
+ 				  unsigned long *load_size);
+ 
++efi_status_t efi_open_read_cmdline_from_file(efi_loaded_image_t *image);
++
++static inline efi_status_t efi_read_cmdline_from_file(efi_loaded_image_t *image) {
++	return efi_open_read_cmdline_from_file(image);
++}
+ 
+ static inline efi_status_t efi_load_dtb(efi_loaded_image_t *image,
+ 					unsigned long *load_addr,
+@@ -861,3 +890,27 @@ efi_enable_reset_attack_mitigation(void) { }
+ void efi_retrieve_tpm2_eventlog(void);
+ 
+ #endif
++
++/**
++ * Windows RT specific stuff
++ */
++enum winrt_device_names {
++	surface_rt,
++	surface_2,
++	/* Add device above */
++	unknown_device,
++	num_devices
++};
++
++enum winrt_device_names winrt_setup(void);
++
++/**
++ * Tegra specific UART stuff
++ */
++void tegra_uart_print(const char *string, ...);
++void tegra_uart_init(void);
++
++/**
++ * I2C Stuff
++ */
++int i2c_recv_buf_small(u8 *buf, u32 size, u32 idx, u32 x, u32 y);
+diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+index 804f542be..417a58571 100644
+--- a/drivers/firmware/efi/libstub/fdt.c
++++ b/drivers/firmware/efi/libstub/fdt.c
+@@ -280,6 +280,14 @@ efi_status_t allocate_new_fdt_and_exit_boot(void *handle,
+ 		goto fail;
+ 	}
+ 
++	/*
++	 * Now that we have done our final memory allocation (and free)
++	 * we can get the memory map key needed for exit_boot_services().
++	 */
++	status = efi_get_memory_map(&map);
++	if (status != EFI_SUCCESS)
++		goto fail_free_new_fdt;
++
+ 	status = update_fdt((void *)fdt_addr, fdt_size,
+ 			    (void *)*new_fdt_addr, MAX_FDT_SIZE, cmdline_ptr,
+ 			    initrd_addr, initrd_size);
+@@ -357,4 +365,4 @@ void *get_fdt(unsigned long *fdt_size)
+ 	}
+ 	*fdt_size = fdt_totalsize(fdt);
+ 	return fdt;
+-}
++}
+\ No newline at end of file
+diff --git a/drivers/firmware/efi/libstub/file.c b/drivers/firmware/efi/libstub/file.c
+index dd95f330f..9c8aeee46 100644
+--- a/drivers/firmware/efi/libstub/file.c
++++ b/drivers/firmware/efi/libstub/file.c
+@@ -84,6 +84,68 @@ static efi_status_t efi_open_volume(efi_loaded_image_t *image,
+ 	return status;
+ }
+ 
++/*
++ * Reads the new cmdline params from file and overrides the cmdline provided by
++ *   the loaded_image protocol.
++ * This is useful if you have no bootloader which can params to the UEFI stub.
++ * Or if you want to boot the kernel as bootarm.efi
++ */
++efi_status_t efi_open_read_cmdline_from_file(efi_loaded_image_t *image)
++{
++	efi_status_t status;
++	efi_file_protocol_t *volume = NULL;
++	efi_file_protocol_t *file = NULL;
++	int i;
++	unsigned long size = 0;
++	static char *file_data = NULL;
++	struct finfo fi = {.filename = L"cmdline.txt"};
++
++	status = efi_open_volume(image, &volume);
++	if (status != EFI_SUCCESS)
++		return status;
++
++	efi_info("Reading cmdline parameters from file: %ls\n", fi.filename);
++
++	status = efi_open_file(volume, &fi, &file, &size);
++	if (status != EFI_SUCCESS)
++		goto err_close_volume;
++
++	// Allocate pool twice as large for later conversion from ascii to unicode
++	status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, size * 2,
++			     (void **)&file_data);
++	if (status != EFI_SUCCESS)
++		goto err_close_volume;
++
++	status = file->read(file, &size, file_data);
++	if (status != EFI_SUCCESS) {
++		efi_err("Failed to read file\n");
++		goto err_on_read_file;
++	}
++	file->close(file);
++
++	// convert ascii to Unicode
++	for (i = size-1; i >= 0; i--) {
++		file_data[i * 2] = file_data[i];
++		file_data[i * 2 + 1] = '\0';
++	}
++	file_data[(size-1)*2] = '\0';
++
++	// set new data
++	image->load_options = file_data;
++	image->load_options_size = size * 2;
++
++	efi_info("cmdline: %ls\n", (efi_char16_t*)image->load_options);
++
++	return EFI_SUCCESS;
++
++
++err_on_read_file:
++	file->close(file);
++
++err_close_volume:
++	return EFI_NOT_FOUND;
++}
++
+ static int find_file_option(const efi_char16_t *cmdline, int cmdline_len,
+ 			    const efi_char16_t *prefix, int prefix_size,
+ 			    efi_char16_t *result, int result_len)
+@@ -247,4 +309,4 @@ efi_status_t handle_cmdline_files(efi_loaded_image_t *image,
+ 	volume->close(volume);
+ 	efi_free(alloc_size, alloc_addr);
+ 	return status;
+-}
++}
+\ No newline at end of file
+diff --git a/drivers/firmware/efi/libstub/random.c b/drivers/firmware/efi/libstub/random.c
+index f85d2c066..bd353b97d 100644
+--- a/drivers/firmware/efi/libstub/random.c
++++ b/drivers/firmware/efi/libstub/random.c
+@@ -67,43 +67,22 @@ efi_status_t efi_random_get_seed(void)
+ 	efi_guid_t rng_proto = EFI_RNG_PROTOCOL_GUID;
+ 	efi_guid_t rng_algo_raw = EFI_RNG_ALGORITHM_RAW;
+ 	efi_guid_t rng_table_guid = LINUX_EFI_RANDOM_SEED_TABLE_GUID;
+-	struct linux_efi_random_seed *prev_seed, *seed = NULL;
+-	int prev_seed_size = 0, seed_size = EFI_RANDOM_SEED_SIZE;
+ 	efi_rng_protocol_t *rng = NULL;
++	struct linux_efi_random_seed *seed = NULL;
+ 	efi_status_t status;
+ 
+ 	status = efi_bs_call(locate_protocol, &rng_proto, NULL, (void **)&rng);
+ 	if (status != EFI_SUCCESS)
+ 		return status;
+ 
+-	/*
+-	 * Check whether a seed was provided by a prior boot stage. In that
+-	 * case, instead of overwriting it, let's create a new buffer that can
+-	 * hold both, and concatenate the existing and the new seeds.
+-	 * Note that we should read the seed size with caution, in case the
+-	 * table got corrupted in memory somehow.
+-	 */
+-	prev_seed = get_efi_config_table(LINUX_EFI_RANDOM_SEED_TABLE_GUID);
+-	if (prev_seed && prev_seed->size <= 512U) {
+-		prev_seed_size = prev_seed->size;
+-		seed_size += prev_seed_size;
+-	}
+-
+-	/*
+-	 * Use EFI_ACPI_RECLAIM_MEMORY here so that it is guaranteed that the
+-	 * allocation will survive a kexec reboot (although we refresh the seed
+-	 * beforehand)
+-	 */
+-	status = efi_bs_call(allocate_pool, EFI_ACPI_RECLAIM_MEMORY,
+-			     struct_size(seed, bits, seed_size),
++	status = efi_bs_call(allocate_pool, EFI_RUNTIME_SERVICES_DATA,
++			     sizeof(*seed) + EFI_RANDOM_SEED_SIZE,
+ 			     (void **)&seed);
+-	if (status != EFI_SUCCESS) {
+-		efi_warn("Failed to allocate memory for RNG seed.\n");
+-		goto err_warn;
+-	}
++	if (status != EFI_SUCCESS)
++		return status;
+ 
+ 	status = efi_call_proto(rng, get_rng, &rng_algo_raw,
+-				EFI_RANDOM_SEED_SIZE, seed->bits);
++				 EFI_RANDOM_SEED_SIZE, seed->bits);
+ 
+ 	if (status == EFI_UNSUPPORTED)
+ 		/*
+@@ -116,28 +95,14 @@ efi_status_t efi_random_get_seed(void)
+ 	if (status != EFI_SUCCESS)
+ 		goto err_freepool;
+ 
+-	seed->size = seed_size;
+-	if (prev_seed_size)
+-		memcpy(seed->bits + EFI_RANDOM_SEED_SIZE, prev_seed->bits,
+-		       prev_seed_size);
+-
++	seed->size = EFI_RANDOM_SEED_SIZE;
+ 	status = efi_bs_call(install_configuration_table, &rng_table_guid, seed);
+ 	if (status != EFI_SUCCESS)
+ 		goto err_freepool;
+ 
+-	if (prev_seed_size) {
+-		/* wipe and free the old seed if we managed to install the new one */
+-		memzero_explicit(prev_seed->bits, prev_seed_size);
+-		efi_bs_call(free_pool, prev_seed);
+-	}
+ 	return EFI_SUCCESS;
+ 
+ err_freepool:
+-	memzero_explicit(seed, struct_size(seed, bits, seed_size));
+ 	efi_bs_call(free_pool, seed);
+-	efi_warn("Failed to obtain seed from EFI_RNG_PROTOCOL\n");
+-err_warn:
+-	if (prev_seed)
+-		efi_warn("Retaining bootloader-supplied seed only");
+ 	return status;
+-}
++}
+\ No newline at end of file
+diff --git a/drivers/firmware/efi/libstub/relocate.c b/drivers/firmware/efi/libstub/relocate.c
+index 8ee9eb2b9..074ee5e4b 100644
+--- a/drivers/firmware/efi/libstub/relocate.c
++++ b/drivers/firmware/efi/libstub/relocate.c
+@@ -171,4 +171,4 @@ efi_status_t efi_relocate_kernel(unsigned long *image_addr,
+ 	*image_addr = new_addr;
+ 
+ 	return status;
+-}
++}
+\ No newline at end of file
+diff --git a/drivers/firmware/efi/libstub/riscv-stub.c b/drivers/firmware/efi/libstub/riscv-stub.c
+index 9c4608434..929a3ea89 100644
+--- a/drivers/firmware/efi/libstub/riscv-stub.c
++++ b/drivers/firmware/efi/libstub/riscv-stub.c
+@@ -25,7 +25,7 @@ typedef void __noreturn (*jump_kernel_func)(unsigned int, unsigned long);
+ 
+ static u32 hartid;
+ 
+-static int get_boot_hartid_from_fdt(void)
++static u32 get_boot_hartid_from_fdt(void)
+ {
+ 	const void *fdt;
+ 	int chosen_node, len;
+@@ -33,26 +33,23 @@ static int get_boot_hartid_from_fdt(void)
+ 
+ 	fdt = get_efi_config_table(DEVICE_TREE_GUID);
+ 	if (!fdt)
+-		return -EINVAL;
++		return U32_MAX;
+ 
+ 	chosen_node = fdt_path_offset(fdt, "/chosen");
+ 	if (chosen_node < 0)
+-		return -EINVAL;
++		return U32_MAX;
+ 
+ 	prop = fdt_getprop((void *)fdt, chosen_node, "boot-hartid", &len);
+ 	if (!prop || len != sizeof(u32))
+-		return -EINVAL;
++		return U32_MAX;
+ 
+-	hartid = fdt32_to_cpu(*prop);
+-	return 0;
++	return fdt32_to_cpu(*prop);
+ }
+ 
+ efi_status_t check_platform_features(void)
+ {
+-	int ret;
+-
+-	ret = get_boot_hartid_from_fdt();
+-	if (ret) {
++	hartid = get_boot_hartid_from_fdt();
++	if (hartid == U32_MAX) {
+ 		efi_err("/chosen/boot-hartid missing or invalid!\n");
+ 		return EFI_UNSUPPORTED;
+ 	}
+@@ -109,4 +106,4 @@ efi_status_t handle_kernel_image(unsigned long *image_addr,
+ 		*image_size = 0;
+ 	}
+ 	return status;
+-}
++}
+\ No newline at end of file
+diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+index 72162645b..dd79f5a04 100644
+--- a/drivers/firmware/efi/libstub/x86-stub.c
++++ b/drivers/firmware/efi/libstub/x86-stub.c
+@@ -414,13 +414,6 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+ 	hdr->ramdisk_image = 0;
+ 	hdr->ramdisk_size = 0;
+ 
+-	/*
+-	 * Disregard any setup data that was provided by the bootloader:
+-	 * setup_data could be pointing anywhere, and we have no way of
+-	 * authenticating or validating the payload.
+-	 */
+-	hdr->setup_data = 0;
+-
+ 	efi_stub_entry(handle, sys_table_arg, boot_params);
+ 	/* not reached */
+ 
+@@ -680,6 +673,7 @@ unsigned long efi_main(efi_handle_t handle,
+ 	unsigned long bzimage_addr = (unsigned long)startup_32;
+ 	unsigned long buffer_start, buffer_end;
+ 	struct setup_header *hdr = &boot_params->hdr;
++	unsigned long addr, size;
+ 	efi_status_t status;
+ 
+ 	efi_system_table = sys_table_arg;
+@@ -768,22 +762,15 @@ unsigned long efi_main(efi_handle_t handle,
+ 	 * arguments will be processed only if image is not NULL, which will be
+ 	 * the case only if we were loaded via the PE entry point.
+ 	 */
+-	if (!efi_noinitrd) {
+-		unsigned long addr, size;
+-
+-		status = efi_load_initrd(image, &addr, &size,
+-					 hdr->initrd_addr_max, ULONG_MAX);
+-
+-		if (status != EFI_SUCCESS) {
+-			efi_err("Failed to load initrd!\n");
+-			goto fail;
+-		}
+-		if (size > 0) {
+-			efi_set_u64_split(addr, &hdr->ramdisk_image,
+-					  &boot_params->ext_ramdisk_image);
+-			efi_set_u64_split(size, &hdr->ramdisk_size,
+-					  &boot_params->ext_ramdisk_size);
+-		}
++	status = efi_load_initrd(image, &addr, &size, hdr->initrd_addr_max,
++				 ULONG_MAX);
++	if (status != EFI_SUCCESS)
++		goto fail;
++	if (size > 0) {
++		efi_set_u64_split(addr, &hdr->ramdisk_image,
++				  &boot_params->ext_ramdisk_image);
++		efi_set_u64_split(size, &hdr->ramdisk_size,
++				  &boot_params->ext_ramdisk_size);
+ 	}
+ 
+ 	/*
+@@ -817,4 +804,4 @@ unsigned long efi_main(efi_handle_t handle,
+ 	efi_err("efi_main() failed!\n");
+ 
+ 	efi_exit(handle, status);
+-}
++}
+\ No newline at end of file
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index a582ddd58..4b3fa8fa9 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -105,27 +105,13 @@ config DRM_PANEL_EDP
+ 	depends on BACKLIGHT_CLASS_DEVICE
+ 	depends on PM
+ 	select VIDEOMODE_HELPERS
+-	select DRM_DISPLAY_DP_HELPER
+-	select DRM_DISPLAY_HELPER
+ 	select DRM_DP_AUX_BUS
+-	select DRM_KMS_HELPER
+ 	help
+ 	  DRM panel driver for dumb eDP panels that need at most a regulator and
+ 	  a GPIO to be powered up. Optionally a backlight can be attached so
+ 	  that it can be automatically turned off when the panel goes into a
+ 	  low power state.
+ 
+-config DRM_PANEL_EBBG_FT8719
+-	tristate "EBBG FT8719 panel driver"
+-	depends on OF
+-	depends on DRM_MIPI_DSI
+-	depends on BACKLIGHT_CLASS_DEVICE
+-	help
+-	  Say Y here if you want to enable support for the EBBG FT8719
+-	  video mode panel. Mainly found on Xiaomi Poco F1 mobile phone.
+-	  The panel has a resolution of 1080x2246. It provides a MIPI DSI
+-	  interface to the host.
+-
+ config DRM_PANEL_ELIDA_KD35T133
+ 	tristate "Elida KD35T133 panel driver"
+ 	depends on OF
+@@ -165,8 +151,7 @@ config DRM_PANEL_ILITEK_IL9322
+ config DRM_PANEL_ILITEK_ILI9341
+ 	tristate "Ilitek ILI9341 240x320 QVGA panels"
+ 	depends on OF && SPI
+-	select DRM_KMS_HELPER
+-	select DRM_GEM_DMA_HELPER
++	depends on DRM_GEM_CMA_HELPER
+ 	depends on BACKLIGHT_CLASS_DEVICE
+ 	select DRM_MIPI_DBI
+ 	help
+@@ -267,6 +252,13 @@ config DRM_PANEL_LEADTEK_LTK500HD1829
+ 	  24 bit RGB per pixel. It provides a MIPI DSI interface to
+ 	  the host and has a built-in LED backlight.
+ 
++config DRM_PANEL_SAMSUNG_CMC6230R
++	tristate "Samsung CMC6230R panel"
++	depends on OF
++	help
++	  Say Y here if you want to enable support for the CMC6230R panel driver
++	  in the Samsung Galaxy Tab 10.1
++
+ config DRM_PANEL_SAMSUNG_LD9040
+ 	tristate "Samsung LD9040 RGB/SPI panel"
+ 	depends on OF && SPI
+@@ -296,15 +288,6 @@ config DRM_PANEL_NEC_NL8048HL11
+ 	  panel (found on the Zoom2/3/3630 SDP boards). To compile this driver
+ 	  as a module, choose M here.
+ 
+-config DRM_PANEL_NEWVISION_NV3052C
+-	tristate "NewVision NV3052C RGB/SPI panel"
+-	depends on OF && SPI
+-	depends on BACKLIGHT_CLASS_DEVICE
+-	select DRM_MIPI_DBI
+-	help
+-	  Say Y here if you want to enable support for the panels built
+-	  around the NewVision NV3052C display controller.
+-
+ config DRM_PANEL_NOVATEK_NT35510
+ 	tristate "Novatek NT35510 RGB panel driver"
+ 	depends on OF
+@@ -315,18 +298,6 @@ config DRM_PANEL_NOVATEK_NT35510
+ 	  around the Novatek NT35510 display controller, such as some
+ 	  Hydis panels.
+ 
+-config DRM_PANEL_NOVATEK_NT35560
+-	tristate "Novatek NT35560 DSI command mode panel"
+-	depends on OF
+-	depends on DRM_MIPI_DSI
+-	depends on BACKLIGHT_CLASS_DEVICE
+-	select VIDEOMODE_HELPERS
+-	help
+-	  Say Y here if you want to enable the Novatek NT35560 display
+-	  controller. This panel supports DSI in both command and video
+-	  mode. This supports several panels such as Sony ACX424AKM and
+-	  ACX424AKP.
+-
+ config DRM_PANEL_NOVATEK_NT35950
+ 	tristate "Novatek NT35950 DSI panel"
+ 	depends on OF
+@@ -444,13 +415,20 @@ config DRM_PANEL_RONBO_RB070D30
+ 	  Say Y here if you want to enable support for Ronbo Electronics
+ 	  RB070D30 1024x600 DSI panel.
+ 
++config DRM_PANEL_SAMSUNG_106HL02
++	tristate "Samsung 106HL02 panel"
++	depends on OF
++	depends on DRM_MIPI_DSI
++	depends on BACKLIGHT_CLASS_DEVICE
++	help
++	  Say Y here if you want to enable support for the Samsung 106HL02 panel
++	  driver which is used in Microsoft Surface 2
++
+ config DRM_PANEL_SAMSUNG_ATNA33XC20
+ 	tristate "Samsung ATNA33XC20 eDP panel"
+ 	depends on OF
+ 	depends on BACKLIGHT_CLASS_DEVICE
+ 	depends on PM
+-	select DRM_DISPLAY_DP_HELPER
+-	select DRM_DISPLAY_HELPER
+ 	select DRM_DP_AUX_BUS
+ 	help
+ 	  DRM panel driver for the Samsung ATNA33XC20 panel. This panel can't
+@@ -629,6 +607,17 @@ config DRM_PANEL_SITRONIX_ST7789V
+ 	  Say Y here if you want to enable support for the Sitronix
+ 	  ST7789V controller for 240x320 LCD panels
+ 
++config DRM_PANEL_SONY_ACX424AKP
++	tristate "Sony ACX424AKP DSI command mode panel"
++	depends on OF
++	depends on DRM_MIPI_DSI
++	depends on BACKLIGHT_CLASS_DEVICE
++	select VIDEOMODE_HELPERS
++	help
++	  Say Y here if you want to enable the Sony ACX424 display
++	  panel. This panel supports DSI in both command and video
++	  mode.
++
+ config DRM_PANEL_SONY_ACX565AKM
+ 	tristate "Sony ACX565AKM panel"
+ 	depends on GPIOLIB && OF && SPI
+@@ -717,4 +706,5 @@ config DRM_PANEL_XINPENG_XPP055C272
+ 	  Say Y here if you want to enable support for the Xinpeng
+ 	  XPP055C272 controller for 720x1280 LCD panels with MIPI/RGB/SPI
+ 	  system interfaces.
++
+ endmenu
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 34e717382..396f5441b 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -9,7 +9,6 @@ obj-$(CONFIG_DRM_PANEL_DSI_CM) += panel-dsi-cm.o
+ obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
+ obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+ obj-$(CONFIG_DRM_PANEL_EDP) += panel-edp.o
+-obj-$(CONFIG_DRM_PANEL_EBBG_FT8719) += panel-ebbg-ft8719.o
+ obj-$(CONFIG_DRM_PANEL_ELIDA_KD35T133) += panel-elida-kd35t133.o
+ obj-$(CONFIG_DRM_PANEL_FEIXIN_K101_IM2BA02) += panel-feixin-k101-im2ba02.o
+ obj-$(CONFIG_DRM_PANEL_FEIYANG_FY07024DI26A30D) += panel-feiyang-fy07024di26a30d.o
+@@ -27,9 +26,7 @@ obj-$(CONFIG_DRM_PANEL_LEADTEK_LTK500HD1829) += panel-leadtek-ltk500hd1829.o
+ obj-$(CONFIG_DRM_PANEL_LG_LB035Q02) += panel-lg-lb035q02.o
+ obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
+ obj-$(CONFIG_DRM_PANEL_NEC_NL8048HL11) += panel-nec-nl8048hl11.o
+-obj-$(CONFIG_DRM_PANEL_NEWVISION_NV3052C) += panel-newvision-nv3052c.o
+ obj-$(CONFIG_DRM_PANEL_NOVATEK_NT35510) += panel-novatek-nt35510.o
+-obj-$(CONFIG_DRM_PANEL_NOVATEK_NT35560) += panel-novatek-nt35560.o
+ obj-$(CONFIG_DRM_PANEL_NOVATEK_NT35950) += panel-novatek-nt35950.o
+ obj-$(CONFIG_DRM_PANEL_NOVATEK_NT36672A) += panel-novatek-nt36672a.o
+ obj-$(CONFIG_DRM_PANEL_NOVATEK_NT39016) += panel-novatek-nt39016.o
+@@ -42,7 +39,9 @@ obj-$(CONFIG_DRM_PANEL_RASPBERRYPI_TOUCHSCREEN) += panel-raspberrypi-touchscreen
+ obj-$(CONFIG_DRM_PANEL_RAYDIUM_RM67191) += panel-raydium-rm67191.o
+ obj-$(CONFIG_DRM_PANEL_RAYDIUM_RM68200) += panel-raydium-rm68200.o
+ obj-$(CONFIG_DRM_PANEL_RONBO_RB070D30) += panel-ronbo-rb070d30.o
++obj-$(CONFIG_DRM_PANEL_SAMSUNG_106HL02) += panel-samsung-106hl02.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20) += panel-samsung-atna33xc20.o
++obj-$(CONFIG_DRM_PANEL_SAMSUNG_CMC6230R) += panel-samsung-cmc6230r.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_DB7430) += panel-samsung-db7430.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_LD9040) += panel-samsung-ld9040.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6D16D0) += panel-samsung-s6d16d0.o
+@@ -63,6 +62,7 @@ obj-$(CONFIG_DRM_PANEL_SHARP_LS060T1SX01) += panel-sharp-ls060t1sx01.o
+ obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7701) += panel-sitronix-st7701.o
+ obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7703) += panel-sitronix-st7703.o
+ obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) += panel-sitronix-st7789v.o
++obj-$(CONFIG_DRM_PANEL_SONY_ACX424AKP) += panel-sony-acx424akp.o
+ obj-$(CONFIG_DRM_PANEL_SONY_ACX565AKM) += panel-sony-acx565akm.o
+ obj-$(CONFIG_DRM_PANEL_SONY_TULIP_TRULY_NT35521) += panel-sony-tulip-truly-nt35521.o
+ obj-$(CONFIG_DRM_PANEL_TDO_TL070WSH30) += panel-tdo-tl070wsh30.o
+@@ -72,4 +72,4 @@ obj-$(CONFIG_DRM_PANEL_TPO_TPG110) += panel-tpo-tpg110.o
+ obj-$(CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA) += panel-truly-nt35597.o
+ obj-$(CONFIG_DRM_PANEL_VISIONOX_RM69299) += panel-visionox-rm69299.o
+ obj-$(CONFIG_DRM_PANEL_WIDECHIPS_WS2401) += panel-widechips-ws2401.o
+-obj-$(CONFIG_DRM_PANEL_XINPENG_XPP055C272) += panel-xinpeng-xpp055c272.o
++obj-$(CONFIG_DRM_PANEL_XINPENG_XPP055C272) += panel-xinpeng-xpp055c272.o
+\ No newline at end of file
+diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
+index 438905e2a..3e3f7675e 100644
+--- a/drivers/i2c/Kconfig
++++ b/drivers/i2c/Kconfig
+@@ -98,6 +98,17 @@ config I2C_SMBUS
+ source "drivers/i2c/algos/Kconfig"
+ source "drivers/i2c/busses/Kconfig"
+ 
++config I2C_HOTPLUG_GPIO
++	tristate "Hot-plugged I2C bus detected by GPIO"
++	depends on GPIOLIB
++	depends on OF
++	help
++	  If you say yes to this option, support will be included for
++	  hot-plugging I2C devices with presence detected by GPIO pin value.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called i2c-hotplug-gpio.
++
+ config I2C_STUB
+ 	tristate "I2C/SMBus Test Stub"
+ 	depends on m
+diff --git a/drivers/i2c/Makefile b/drivers/i2c/Makefile
+index c1d493dc9..9fd443108 100644
+--- a/drivers/i2c/Makefile
++++ b/drivers/i2c/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_I2C_SMBUS)		+= i2c-smbus.o
+ obj-$(CONFIG_I2C_CHARDEV)	+= i2c-dev.o
+ obj-$(CONFIG_I2C_MUX)		+= i2c-mux.o
+ obj-y				+= algos/ busses/ muxes/
++obj-$(CONFIG_I2C_HOTPLUG_GPIO)	+= i2c-hotplug-gpio.o
+ obj-$(CONFIG_I2C_STUB)		+= i2c-stub.o
+ obj-$(CONFIG_I2C_SLAVE_EEPROM)	+= i2c-slave-eeprom.o
+ obj-$(CONFIG_I2C_SLAVE_TESTUNIT)	+= i2c-slave-testunit.o
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 8d19f01a7..b8f7c0ebb 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -731,6 +731,10 @@ static unsigned short i2c_encode_flags_to_addr(struct i2c_client *client)
+  * are purposely not enforced, except for the general call address. */
+ static int i2c_check_addr_validity(unsigned int addr, unsigned short flags)
+ {
++	if (addr == 0x00 && of_machine_is_compatible("microsoft,surface-2")) {
++		return 0;
++	}
++
+ 	if (flags & I2C_CLIENT_TEN) {
+ 		/* 10-bit address, all values are valid */
+ 		if (addr > 0x3ff)
+@@ -759,6 +763,9 @@ int i2c_check_7bit_addr_validity_strict(unsigned short addr)
+ 	 *  0x78-0x7b  10-bit slave addressing
+ 	 *  0x7c-0x7f  Reserved for future purposes
+ 	 */
++	if (addr == 0x00 && of_machine_is_compatible("microsoft,surface-2")) {
++		return 0;
++	}
+ 	if (addr < 0x08 || addr > 0x77)
+ 		return -EINVAL;
+ 	return 0;
+diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+index fd375ce38..e971bd3b2 100644
+--- a/drivers/i2c/i2c-core-of.c
++++ b/drivers/i2c/i2c-core-of.c
+@@ -150,6 +150,26 @@ struct i2c_client *of_find_i2c_device_by_node(struct device_node *node)
+ }
+ EXPORT_SYMBOL(of_find_i2c_device_by_node);
+ 
++/* must call put_device() when done with returned i2c_client device */
++struct i2c_client *of_get_i2c_device_by_phandle(struct device *dev,
++						const char *name, int index)
++{
++	struct device_node *np;
++	struct i2c_client *i2c;
++
++	np = of_parse_phandle(dev_of_node(dev), name, index);
++	if (!np) {
++		dev_err(dev, "can't resolve phandle %s:%d\n", name, index);
++		return ERR_PTR(-ENODEV);
++	}
++
++	i2c = of_find_i2c_device_by_node(np);
++	of_node_put(np);
++
++	return i2c ?: ERR_PTR(-EPROBE_DEFER);
++}
++EXPORT_SYMBOL_GPL(of_get_i2c_device_by_phandle);
++
+ /* must call put_device() when done with returned i2c_adapter device */
+ struct i2c_adapter *of_find_i2c_adapter_by_node(struct device_node *node)
+ {
+@@ -187,6 +207,26 @@ struct i2c_adapter *of_get_i2c_adapter_by_node(struct device_node *node)
+ }
+ EXPORT_SYMBOL(of_get_i2c_adapter_by_node);
+ 
++/* must call i2c_put_adapter() when done with returned i2c_adapter device */
++struct i2c_adapter *of_get_i2c_adapter_by_phandle(struct device *dev,
++						  const char *name, int index)
++{
++	struct i2c_adapter *adapter;
++	struct device_node *np;
++
++	np = of_parse_phandle(dev_of_node(dev), name, index);
++	if (!np) {
++		dev_err(dev, "can't resolve phandle %s:%d\n", name, index);
++		return ERR_PTR(-ENODEV);
++	}
++
++	adapter = of_get_i2c_adapter_by_node(np);
++	of_node_put(np);
++
++	return adapter ?: ERR_PTR(-EPROBE_DEFER);
++}
++EXPORT_SYMBOL_GPL(of_get_i2c_adapter_by_phandle);
++
+ static const struct of_device_id*
+ i2c_of_match_device_sysfs(const struct of_device_id *matches,
+ 				  struct i2c_client *client)
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 16119ac1a..d0a517b15 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -971,12 +971,19 @@ int i2c_handle_smbus_host_notify(struct i2c_adapter *adap, unsigned short addr);
+ /* must call put_device() when done with returned i2c_client device */
+ struct i2c_client *of_find_i2c_device_by_node(struct device_node *node);
+ 
++/* must call put_device() when done with returned i2c_client device */
++struct i2c_client *of_get_i2c_device_by_phandle(struct device *dev,
++						const char *name, int index);
++
+ /* must call put_device() when done with returned i2c_adapter device */
+ struct i2c_adapter *of_find_i2c_adapter_by_node(struct device_node *node);
+ 
+ /* must call i2c_put_adapter() when done with returned i2c_adapter device */
+ struct i2c_adapter *of_get_i2c_adapter_by_node(struct device_node *node);
+ 
++struct i2c_adapter *of_get_i2c_adapter_by_phandle(struct device *dev,
++						  const char *name, int index);
++
+ const struct of_device_id
+ *i2c_of_match_device(const struct of_device_id *matches,
+ 		     struct i2c_client *client);
+diff --git a/init/main.c b/init/main.c
+index 758c14df1..b8e00ab9a 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -258,7 +258,7 @@ static int __init loglevel(char *str)
+ 	 * are quite hard to debug
+ 	 */
+ 	if (get_option(&str, &newlevel)) {
+-		console_loglevel = newlevel;
++		console_loglevel = 7;
+ 		return 0;
+ 	}
+ 
