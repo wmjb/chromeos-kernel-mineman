@@ -22,6 +22,7 @@
 
 	chosen {
 		stdout-path = "serial0:115200n8";
+		bootargs = "root=/dev/mmcblk0p3 rw rootwait nosmp maxcpus=1 androidboot.selinux=permissive cros_legacy console=ttyS0,115200n8 ignore_loglevel=1 drm.atomic=1 enforcing=0";
 	};
 
 	host1x@50000000 {
